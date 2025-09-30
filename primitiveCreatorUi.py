@@ -5,8 +5,13 @@ except:
 	from PySide2 import QtCore, QtGui, QtWidgets
 	from shiboken2 import wrapInstance
 
+
 import maya.OpenMayaUI as omui
 import os
+
+import importlib
+from . import primitiveCreatorUtil as sputil
+importlib.reload(sputil)
 
 ICON_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'icons'))
 
@@ -15,7 +20,7 @@ class PrimitiveCreatorDialog(QtWidgets.QDialog):
 		super().__init__(parent)
 
 		self.resize(300,300)
-		self.setWindowTitle('Primitive Creator')
+		self.setWindowTitle('😳Primitive Creator')
 
 		self.main_layout = QtWidgets.QVBoxLayout()
 		self.setLayout(self.main_layout)
@@ -39,8 +44,10 @@ class PrimitiveCreatorDialog(QtWidgets.QDialog):
 
 		self.button_layout = QtWidgets.QHBoxLayout()
 		self.main_layout.addLayout(self.button_layout)
-		self.create_button = QtWidgets.QPushButton('Create')
-		self.cancel_button = QtWidgets.QPushButton('Cancel')
+		self.create_button = QtWidgets.QPushButton('Create✨')
+		self.create_button.clicked.connect(self.onItemClicked)
+		self.cancel_button = QtWidgets.QPushButton('Cancel🚫')
+		self.cancel_button.clicked.connect(self.close)
 		self.button_layout.addStretch()
 		self.button_layout.addWidget(self.create_button)
 		self.button_layout.addWidget(self.cancel_button)
@@ -55,7 +62,11 @@ class PrimitiveCreatorDialog(QtWidgets.QDialog):
 			item.setIcon(QtGui.QIcon(os.path.join(ICON_PATH, f'{prim}.png')))
 			self.primitive_listWidget.addItem(item)
 
-
+	def onItemClicked(self):
+		item = self.primitive_listWidget.currentItem()
+		if item:
+			sputil.onCreateClicked(item.text())
+		
 def run():
 	global ui
 
